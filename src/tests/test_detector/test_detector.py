@@ -4,8 +4,8 @@ import unittest
 
 from tests.testcase_based_on_data import TestCaseBasedOnData
 
-from nonogram import Nonogram
-from detector import Detector
+from base.nonogram import Nonogram
+from detector.detector import Detector
 
 class TestDetector(TestCaseBasedOnData):
     def test_detect_and_compare(self):

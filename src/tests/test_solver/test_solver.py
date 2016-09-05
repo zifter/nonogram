@@ -4,8 +4,9 @@ import unittest
 
 from tests.testcase_based_on_data import TestCaseBasedOnData
 
-from nonogram import Nonogram, Solution
-from solver import Solver
+from base.nonogram import Nonogram
+from base.solution import Solution
+from solver.solver import Solver
 
 class TestSolver(TestCaseBasedOnData):
     def test_solve_and_compare(self):

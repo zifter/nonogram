@@ -1,4 +1,4 @@
-from nonogram import Nonogram, Solution
+from base.solution import Solution
 
 class Solver(object):
     def __init__(self):
