@@ -52,16 +52,16 @@ class TestSolutionClass(unittest.TestCase):
     def test_col_and_row_getter_with_modifier(self):
         s0 = Solution([[1, 2], [3, 4], [5, 6]])
 
-        self.assertEqual(s0.row(0).tolist(), [1, 3, 5])
-        self.assertEqual(s0.row(1).tolist(), [2, 4, 6])
+        self.assertEqual(s0.col(0).tolist(), [1, 3, 5])
+        self.assertEqual(s0.col(1).tolist(), [2, 4, 6])
 
-        self.assertEqual(s0.col(0).tolist(), [1, 2])
-        self.assertEqual(s0.col(1).tolist(), [3, 4])
-        self.assertEqual(s0.col(2).tolist(), [5, 6])
+        self.assertEqual(s0.row(0).tolist(), [1, 2])
+        self.assertEqual(s0.row(1).tolist(), [3, 4])
+        self.assertEqual(s0.row(2).tolist(), [5, 6])
 
-        s0.row(0)[1] = 42
-        self.assertEqual(s0.row(0).tolist(), [1, 42, 5])
-        self.assertEqual(s0.col(1).tolist(), [42, 4])
+        s0.col(0)[1] = 42
+        self.assertEqual(s0.col(0).tolist(), [1, 42, 5])
+        self.assertEqual(s0.row(1).tolist(), [42, 4])
 
 
 if __name__ == '__main__':

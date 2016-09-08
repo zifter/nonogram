@@ -54,7 +54,7 @@ class TestNonogramClass(unittest.TestCase):
     def test_shape_layout_getter(self):
         n0 = Nonogram("black", [[1], [2], [3, 4]], [[1, 3], [2, 5]])
 
-        self.assertEqual(n0.shape(), (3, 2))
+        self.assertEqual(n0.shape(), (2, 3))
 
         self.assertEqual(n0.row_layout(0), [1])
         self.assertEqual(n0.row_layout(1), [2])
@@ -62,6 +62,14 @@ class TestNonogramClass(unittest.TestCase):
 
         self.assertEqual(n0.col_layout(0), [1, 3])
         self.assertEqual(n0.col_layout(1), [2, 5])
+
+    def test_space_size(self):
+        n0 = Nonogram("black", [[1], [2], [3, 4]], [[1, 3], [2, 5]])
+        self.assertEqual(n0.space_size(), 1)
+
+        # todo
+        n1 = Nonogram("color", [[1], [2], [3, 4]], [[1, 3], [2, 5]])
+        self.assertEqual(n1.space_size(), 0)
 
 
 if __name__ == '__main__':
