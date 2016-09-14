@@ -23,10 +23,10 @@ class LayoutIndex(object):
         return self._done
 
     def is_none(self):
-        return self._id == 0
-
-    def is_spase(self):
         return self._id == -1
 
+    def is_spase(self):
+        return self._id == 0
+
     def __eq__(self, other):
-        return other is not None and not self.is_spase() and not self.is_none() and self._id == other._id
+        return type(other) is LayoutIndex and not self.is_spase() and not self.is_none() and self._id == other._id
