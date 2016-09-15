@@ -7,8 +7,8 @@ class SolutionStep(object):
         self._idToIndex = {}
         self._nonogram = nonogram
 
-        self._idToIndex[-1] = LayoutIndex(0, -1)
-        self._idToIndex[0] = LayoutIndex(0, 0)
+        self._idToIndex[-1] = -1
+        self._idToIndex[0] = 0
 
         self.row = [[self.__getIndex(x) for x in r] for r in nonogram.rows()]
         self.column = [[self.__getIndex(x) for x in c] for c in nonogram.columns()]

@@ -5,7 +5,8 @@ from collections import OrderedDict
 class Solution(object):
     def __init__(self, matrix=[], shape=None):
         if shape:
-            self.matrix = numpy.matrix(numpy.zeros(shape=shape))
+            self.matrix = numpy.matrix(numpy.empty(shape=shape))
+            self.matrix.fill(-1) # undefined
         else:
             self.matrix = numpy.matrix(matrix)
 
@@ -25,7 +26,12 @@ class Solution(object):
         for i in xrange(x_size):
             s += '|'
             for j in xrange(y_size):
-                s += '#|' if self.matrix[i, j] else ' |'
+                if self.matrix[i, j] > 0:
+                    s += '#|'
+                elif self.matrix[i, j] == 0:
+                    s += ' |'
+                else:
+                    s += '?|'
             s += '\n'
 
         return s

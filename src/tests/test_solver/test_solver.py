@@ -54,6 +54,16 @@ class TestSolveMethod(TestCaseBasedOnData):
 
         self.assertEqual(r, [li1, li1, (li1, None), (li1, None)])
 
+    def test_fill_full_line_3(self):
+        li1 = LayoutIndex(2, 991)
+        r = SolveMethod.fill_line([li1], [-1, 0, -1, -1], 1)
+
+        self.assertEqual(r, [(li1, None), (li1, None), li1, li1])
+
+    def test_fill_empty_layout(self):
+        r = SolveMethod.fill_line([], [-1, -1, -1, -1], 1)
+        self.assertEqual(r, [(None, None)]*4)
+
     #
     # find intersection
     #

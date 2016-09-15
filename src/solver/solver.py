@@ -20,7 +20,8 @@ class Solver(object):
         ss = SolutionStep(self.nonogram)
         self.ss = ss
 
-        self.execute_for_each_line(self.find_intersection)
+        for i in xrange(10):
+            self.execute_for_each_line(self.find_intersection)
 
         self.ss = None
         return ss.solution()
@@ -72,33 +73,59 @@ class SolveMethod(object):
         :param space: size of space
         :return: [LayoutIndex] suitable line for this layout
         """
+        if not layout:
+            return [(None, None)] * len(line)
+
         result = deepcopy(line)
-        s = 0
-        for i in xrange(len(layout)):
-            index = layout[i]
+        line_len = len(result)
+
+        p = 0
+        i = 0
+        prev_index = None
+        index = layout[0]
+        next_index = layout[1] if len(layout) > 1 else None
+        while index:
+            found = False
+            while not found:
+                if p + index.value() > line_len:
+                    raise LineOutOfRange()
+
+                found = True
+                pretend = result[p:p + index.value()]
+                for v in pretend:
+                    if not (v == -1 or v == index):
+                        found = False
+                        break
+
+                if not found:
+                    result[p] = SolveMethod.make_space(prev_index, index)
+                    p += 1
+                else:
+                    for v in xrange(p, p + index.value()):
+                        result[v] = index
+
+                    p += index.value()
+
+            space = space if next_index is not None else len(result) - p
+            for v in xrange(space):
+                if next_index is not None and p > len(result):
+                    raise LineOutOfRange()
+
+                result[p] = SolveMethod.make_space(index, next_index)
+                p += 1
+
+            i += 1
+            prev_index = index
+            index = next_index
             next_index = layout[i + 1] if len(layout) > (i + 1) else None
 
-            for v in xrange(index.value()):
-                if s >= len(result):
-                    raise LineOutOfRange()
-
-                result[s] = index
-                s += 1
-
-            space = space if next_index is not None else len(result) - s
-            for v in xrange(space):
-                if next_index is not None and s >= len(result):
-                    raise LineOutOfRange()
-
-                result[s] = SolveMethod.make_space(index, next_index)
-                s += 1
 
         return result
 
     @staticmethod
     def find_intersection(layout, line, space):
         forward_line = SolveMethod.fill_line(layout, line, space)
-        reversed_line = SolveMethod.fill_line(list(reversed(layout)), line, space)[::-1]
+        reversed_line = SolveMethod.fill_line(list(reversed(layout)), list(reversed(line)), space)[::-1]
 
         result = [None] * len(line)
         for i in xrange(len(line)):
