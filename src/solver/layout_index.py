@@ -7,6 +7,12 @@ class LayoutIndex(object):
         self._value = value
         self._done = False
 
+    def __repr__(self):
+        return "[%s, %s, %s]" % (self.value(), self.color(), self.id())
+
+    def __str__(self):
+        return "[%s, %s, %s]" % (self.value, self._id, self._color)
+
     def value(self):
         return self._value
 

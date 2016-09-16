@@ -8,8 +8,12 @@ class SolverException(RuntimeError):
 class LineOutOfRange(SolverException):
     pass
 
+class IndexOutOfRange(SolverException):
+    pass
+
 class Solver(object):
     def __init__(self):
+        self.step = 0
         self.type = "black"
         self.nonogram = None
         self.ss = None
@@ -31,14 +35,18 @@ class Solver(object):
         space = self.nonogram.space_size()
         for i in xrange(y_size):
             layout, line = self.ss.row_layout_and_solution(i)
+            print self.step
             func(layout, line, space)
+            self.step += 1
 
         for i in xrange(x_size):
             layout, line = self.ss.col_layout_and_solution(i)
+            print self.step
             func(layout, line, space)
+            self.step += 1
 
     def find_intersection(self, layout, line, space):
-        result_line = SolveMethod.find_intersection(layout, [self.ss.index(l) for l in line], space)
+        result_line = SolveMethod.find_intersection(layout, [int(i) for i in line], space)
         for i in xrange(len(result_line)):
             if result_line[i]:
                 line[i] = result_line[i]
@@ -46,7 +54,7 @@ class Solver(object):
 
 class SolveMethod(object):
     @staticmethod
-    def make_space(index1, index2):
+    def __make_space_index(index1, index2):
         if index1:
             if index2:
                 if index1.id() == index2.id():
@@ -63,6 +71,32 @@ class SolveMethod(object):
                 raise SolverException()
 
             return (index2, None)
+
+    @staticmethod
+    def find_nearest_pos(index, line):
+        # TODO: color
+        ps = None
+        pe = None
+        for i in xrange(len(line)):
+            if line[i] == index.color():
+                if not ps:
+                    ps = i
+            elif ps:
+                if not pe:
+                    pe = i
+                    break
+
+        if not pe and ps:
+            pe = len(line)
+
+        if pe:
+            if pe - ps > index.value():
+                raise IndexOutOfRange()
+
+            return pe - index.value()
+
+        return -1
+
 
     @staticmethod
     def fill_line(layout, line, space):
@@ -83,26 +117,46 @@ class SolveMethod(object):
         i = 0
         prev_index = None
         index = layout[0]
-        next_index = layout[1] if len(layout) > 1 else None
+        next_index = layout[1] if (len(layout) > 1) else None
         while index:
-            found = False
-            while not found:
+            offsetFromEnd = len(line)
+            next_indexes = layout[i+1:]
+            if next_indexes:
+                offsetFromEnd = space * (len(next_indexes))
+                for v in next_indexes:
+                    offsetFromEnd += v.value()
+
+
+            offsetSp = SolveMethod.find_nearest_pos(index, line[p:offsetFromEnd])
+            if offsetSp > 0:
+                for v in xrange(p, p + offsetSp):
+                    result[v] = SolveMethod.__make_space_index(prev_index, index)
+                p += offsetSp
+
+            # try suitable position for
+            positionIsSuitable = False
+            while not positionIsSuitable:
                 if p + index.value() > line_len:
+                    print line
+                    print result
                     raise LineOutOfRange()
 
-                found = True
+                positionIsSuitable = True
                 pretend = result[p:p + index.value()]
                 for v in pretend:
-                    if not (v == -1 or v == index):
-                        found = False
+                    if not (v == -1 or v == index.color()):
+                        positionIsSuitable = False
                         break
 
-                if not found:
-                    result[p] = SolveMethod.make_space(prev_index, index)
+                if not positionIsSuitable:
+                    result[p] = SolveMethod.__make_space_index(prev_index, index)
                     p += 1
                 else:
                     for v in xrange(p, p + index.value()):
-                        result[v] = index
+                        try:
+                            result[v] = index
+                        except:
+                            pass
 
                     p += index.value()
 
@@ -111,7 +165,7 @@ class SolveMethod(object):
                 if next_index is not None and p > len(result):
                     raise LineOutOfRange()
 
-                result[p] = SolveMethod.make_space(index, next_index)
+                result[p] = SolveMethod.__make_space_index(index, next_index)
                 p += 1
 
             i += 1
@@ -131,6 +185,6 @@ class SolveMethod(object):
         for i in xrange(len(line)):
             if forward_line[i] == reversed_line[i]:
                 # -1 - space
-                result[i] = 0 if type(forward_line[i]) is tuple else reversed_line[i].id()
+                result[i] = 0 if type(forward_line[i]) is tuple else reversed_line[i].color()
 
         return result
