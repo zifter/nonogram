@@ -42,14 +42,13 @@ class TestSolveMethod(TestCaseBasedOnData):
 
     def test_find_nearest_pos_3(self):
         # index, layout, line
-        li1 = LayoutIndex(2, 991)
-        self.assertRaises(IndexOutOfRange, SolveMethod.find_nearest_pos, li1, [-1, -1, 1, 1, 1, -1])
-
-    def test_find_nearest_pos_4(self):
-        # index, layout, line
         li1 = LayoutIndex(3, 991)
         r = SolveMethod.find_nearest_pos(li1, [-1, -1, -1, 1, 1, 1])
         self.assertEqual(r, 3)
+
+    def test_find_nearest_pos_4(self):
+        li1 = LayoutIndex(2, 991)
+        self.assertRaises(IndexOutOfRange, SolveMethod.find_nearest_pos, li1, [-1, 1, 1, 1, 1, -1])
 
 
     #
@@ -130,6 +129,21 @@ class TestSolveMethod(TestCaseBasedOnData):
         r = SolveMethod.find_intersection([li1, li2], [-1, -1, -1, -1], 1)
 
         self.assertEqual(r, [1, 1, 0, 1])
+
+    def test_find_intersection_13_l1_7_1(self):
+        li1 = LayoutIndex(1, 991)
+        li2 = LayoutIndex(7, 992)
+        li3 = LayoutIndex(1, 993)
+        r = SolveMethod.find_intersection([li1, li2, li3], [-1, -1, -1, -1, 1, 1, 1, 1, 1, -1, -1, -1, -1], 1)
+
+        self.assertEqual(r, [None, None, None, None, 1, 1, 1, 1, 1, None, None, None, None])
+
+
+    def test_find_intersection_5_l3(self):
+        li1 = LayoutIndex(3, 991)
+        r = SolveMethod.find_intersection([li1], [-1, 1, 1, 1, -1], 1)
+
+        self.assertEqual(r, [0, 1, 1, 1, 0])
 
 if __name__ == '__main__':
     unittest.main()

@@ -91,11 +91,15 @@ class SolveMethod(object):
 
         if pe:
             if pe - ps > index.value():
-                raise IndexOutOfRange()
+                # it's mean we found another index
+                pe = SolveMethod.find_nearest_pos(index, line[0:ps])
+
+            if pe - ps < index.value():
+                raise IndexOutOfRange
 
             return pe - index.value()
 
-        return -1
+        return 0
 
 
     @staticmethod
@@ -110,6 +114,8 @@ class SolveMethod(object):
         if not layout:
             return [(None, None)] * len(line)
 
+        print line
+        print layout
         result = deepcopy(line)
         line_len = len(result)
 
@@ -119,15 +125,14 @@ class SolveMethod(object):
         index = layout[0]
         next_index = layout[1] if (len(layout) > 1) else None
         while index:
-            offsetFromEnd = len(line)
+            offsetFromEnd = 0
             next_indexes = layout[i+1:]
             if next_indexes:
                 offsetFromEnd = space * (len(next_indexes))
                 for v in next_indexes:
                     offsetFromEnd += v.value()
 
-
-            offsetSp = SolveMethod.find_nearest_pos(index, line[p:offsetFromEnd])
+            offsetSp = SolveMethod.find_nearest_pos(index, line[p:line_len - offsetFromEnd])
             if offsetSp > 0:
                 for v in xrange(p, p + offsetSp):
                     result[v] = SolveMethod.__make_space_index(prev_index, index)
