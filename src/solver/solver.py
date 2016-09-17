@@ -74,6 +74,44 @@ class SolveMethod(object):
         return offsetFromEnd
 
     @staticmethod
+    def get_suitable_line_up(index, line):
+        if index.value() > len(line):
+            raise LineOutOfRange
+
+        r = []
+
+        firstPosOfIndex = len(line)
+        for i in xrange(len(line)-index.value()):
+            if line[i] == index.color():
+                firstPosOfIndex = i + index.value()
+                break
+
+        for i in xrange(0, firstPosOfIndex - index.value() + 1):
+            positionIsSuitable = True
+            for v in line[i:i+index.value()]:
+                if not (v == -1 or v == index.color()):
+                    positionIsSuitable = False
+                    break
+
+            if positionIsSuitable:
+                pretend = deepcopy(line)
+                for v in xrange(i, i+index.value()):
+                    pretend[v] = index
+                r.append(pretend)
+
+        return r
+
+    @staticmethod
+    def merge_lineups(lineups):
+        r = deepcopy(lineups[0])
+        for i in xrange(1, len(lineups)):
+            for j in xrange(len(r)):
+                if r[j] != lineups[i][j]:
+                    r[j] = None
+
+        return r
+
+    @staticmethod
     def __make_space_index(index1, index2):
         if index1:
             if index2:
@@ -156,45 +194,50 @@ class SolveMethod(object):
             next_indexes = layout[i+1:]
             offsetFromEnd = SolveMethod.cells_amount(next_indexes, space) + space if next_indexes else 0
 
-            offset_start_point = SolveMethod.find_nearest_pos(index, line[p:line_len - offsetFromEnd], next_indexes)
-            if offset_start_point > 0:
-                for v in xrange(p, p + offset_start_point):
+            offsetStartPoint = SolveMethod.find_nearest_pos(index, line[p:line_len - offsetFromEnd], next_indexes)
+            if offsetStartPoint > 0:
+                for v in xrange(p, p + offsetStartPoint):
                     result[v] = SolveMethod.__make_space_index(prev_index, index)
-                p += offset_start_point
+                p += offsetStartPoint
 
-            # try suitable position for
-            positionIsSuitable = False
-            while not positionIsSuitable:
-                if p + index.value() > line_len:
-                    print line
-                    print result
-                    raise LineOutOfRange()
+            currentLineForIndex = line[p:line_len - offsetFromEnd]
+            suitableLineUps = SolveMethod.get_suitable_line_up(index, currentLineForIndex)
 
-                positionIsSuitable = True
-                pretend = result[p:p + index.value()]
-                for v in pretend:
-                    if not (v == -1 or v == index.color()):
-                        positionIsSuitable = False
+            if not suitableLineUps:
+                raise SolverException("Suitable line up doesn't found: %s = %s" % (index, currentLineForIndex))
+
+            indexStarted = False
+            lineUp = suitableLineUps[0]
+            offset = 0
+            while offset < len(lineUp):
+                if lineUp[offset] == index:
+                    result[p + offset] = index
+                    indexStarted = True
+                else:
+                    if lineUp[offset] in (-1, 0) and not indexStarted:
+                        result[p + offset] = SolveMethod.__make_space_index(prev_index, index)
+
+                    if indexStarted:
                         break
 
-                if not positionIsSuitable:
-                    result[p] = SolveMethod.__make_space_index(prev_index, index)
-                    p += 1
-                else:
-                    for v in xrange(p, p + index.value()):
-                        try:
-                            result[v] = index
-                        except:
-                            pass
+                offset += 1
 
-                    p += index.value()
+            p += offset
 
-            space = space if next_index is not None else len(result) - p
+            mergedLineups = None
+            if next_index is None:
+                mergedLineups = SolveMethod.merge_lineups(suitableLineUps)[offset:]
+                space = len(result) - p
+
             for v in xrange(space):
                 if next_index is not None and p > len(result):
                     raise LineOutOfRange()
 
-                result[p] = SolveMethod.__make_space_index(index, next_index)
+                if result[p] == 0 or next_index is not None or (mergedLineups is not None and mergedLineups[v] == -1):
+                    result[p] = SolveMethod.__make_space_index(index, next_index)
+                else:
+                    result[p] = None
+
                 p += 1
 
             i += 1
@@ -212,8 +255,8 @@ class SolveMethod(object):
 
         result = [None] * len(line)
         for i in xrange(len(line)):
-            if forward_line[i] == reversed_line[i]:
+            if forward_line[i] == reversed_line[i] and reversed_line[i] is not None:
                 # -1 - space
-                result[i] = 0 if type(forward_line[i]) is tuple else reversed_line[i].color()
+                result[i] = 0 if type(forward_line[i]) is tuple else forward_line[i].color()
 
         return result
