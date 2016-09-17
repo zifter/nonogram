@@ -74,14 +74,14 @@ class SolveMethod(object):
         return offsetFromEnd
 
     @staticmethod
-    def get_suitable_line_up(index, line):
+    def get_suitable_line_up(index, line, space):
         if index.value() > len(line):
             raise LineOutOfRange
 
         r = []
 
         firstPosOfIndex = len(line)
-        for i in xrange(len(line)-index.value()):
+        for i in xrange(len(line)-index.value() + 1):
             if line[i] == index.color():
                 firstPosOfIndex = i + index.value()
                 break
@@ -90,6 +90,12 @@ class SolveMethod(object):
             positionIsSuitable = True
             for v in line[i:i+index.value()]:
                 if not (v == -1 or v == index.color()):
+                    positionIsSuitable = False
+                    break
+
+            nextCells = line[i+index.value():i+index.value() + space]
+            for v in nextCells:
+                if v not in (-1, 0):
                     positionIsSuitable = False
                     break
 
@@ -201,7 +207,7 @@ class SolveMethod(object):
                 p += offsetStartPoint
 
             currentLineForIndex = line[p:line_len - offsetFromEnd]
-            suitableLineUps = SolveMethod.get_suitable_line_up(index, currentLineForIndex)
+            suitableLineUps = SolveMethod.get_suitable_line_up(index, currentLineForIndex, space)
 
             if not suitableLineUps:
                 raise SolverException("Suitable line up doesn't found: %s = %s" % (index, currentLineForIndex))

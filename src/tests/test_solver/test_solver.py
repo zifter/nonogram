@@ -53,7 +53,7 @@ class TestSolveMethod(TestCaseBasedOnData):
     #
     def test_get_suitable_line_up_1(self):
         li1 = LayoutIndex(2, 991)
-        r = SolveMethod.get_suitable_line_up(li1, [-1, -1, -1])
+        r = SolveMethod.get_suitable_line_up(li1, [-1, -1, -1], 1)
 
         self.assertEqual(len(r), 2)
         self.assertEqual(r[0], [li1, li1, -1])
@@ -61,42 +61,49 @@ class TestSolveMethod(TestCaseBasedOnData):
 
     def test_get_suitable_line_up_2(self):
         li1 = LayoutIndex(2, 991)
-        r = SolveMethod.get_suitable_line_up(li1, [-1, -1, 0, -1])
+        r = SolveMethod.get_suitable_line_up(li1, [-1, -1, 0, -1], 1)
 
         self.assertEqual(len(r), 1)
         self.assertEqual(r[0], [li1, li1, 0, -1])
 
     def test_get_suitable_line_up_3(self):
         li1 = LayoutIndex(4, 991)
-        r = SolveMethod.get_suitable_line_up(li1, [-1, -1, 0, -1])
+        r = SolveMethod.get_suitable_line_up(li1, [-1, -1, 0, -1], 1)
 
         self.assertEqual(r, [])
 
     def test_get_suitable_line_up_4(self):
         li1 = LayoutIndex(2, 991)
-        r = SolveMethod.get_suitable_line_up(li1, [-1, -1])
+        r = SolveMethod.get_suitable_line_up(li1, [-1, -1], 1)
 
         self.assertEqual(len(r), 1)
         self.assertEqual(r[0], [li1, li1])
 
     def test_get_suitable_line_up_5(self):
         li1 = LayoutIndex(3, 991)
-        self.assertRaises(LineOutOfRange, SolveMethod.get_suitable_line_up, li1, [-1, -1])
+        self.assertRaises(LineOutOfRange, SolveMethod.get_suitable_line_up, li1, [-1, -1], 1)
 
     def test_get_suitable_line_up_6(self):
         li1 = LayoutIndex(2, 991)
-        r = SolveMethod.get_suitable_line_up(li1, [1, -1, -1, -1, -1])
+        r = SolveMethod.get_suitable_line_up(li1, [1, -1, -1, -1, -1], 1)
 
         self.assertEqual(len(r), 1)
         self.assertEqual(r[0], [li1, li1, -1, -1, -1])
 
     def test_get_suitable_line_up_7(self):
         li1 = LayoutIndex(2, 991)
-        r = SolveMethod.get_suitable_line_up(li1, [-1, 1, -1, -1, -1, -1])
+        r = SolveMethod.get_suitable_line_up(li1, [-1, 1, -1, -1, -1, -1], 1)
 
         self.assertEqual(len(r), 2)
         self.assertEqual(r[0], [li1, li1, -1, -1, -1, -1])
         self.assertEqual(r[1], [-1, li1, li1, -1, -1, -1])
+
+    def test_get_suitable_line_up_8(self):
+        li1 = LayoutIndex(1, 991)
+        r = SolveMethod.get_suitable_line_up(li1, [-1, 1], 1)
+
+        self.assertEqual(len(r), 1)
+        self.assertEqual(r[0], [-1, li1])
 
     #
     # merge line ups
@@ -208,6 +215,13 @@ class TestSolveMethod(TestCaseBasedOnData):
 
         self.assertEqual(r, [li1, li1, li1, li1, None, (li1, None), (li1, None), (li1, None), (li1, None)])
 
+    def test_fill_full_line_9(self):
+        li1 = LayoutIndex(1, 991)
+        li2= LayoutIndex(1, 992)
+        r = SolveMethod.fill_line([li1, li2], [-1, -1, -1, -1, 1, -1, -1, 1, -1], 1)
+
+        self.assertEqual(r, [(li1, None), (li1, None), (li1, None), (li1, None), li1, (li1, li2), (li1, li2), li2, (li2, None)])
+
     #
     # find intersection
     #
@@ -270,6 +284,27 @@ class TestSolveMethod(TestCaseBasedOnData):
         r = SolveMethod.find_intersection([li1], [-1, 1, 1, 1, -1, -1, -1, -1, -1, -1], 1)
 
         self.assertEqual(r, [None, 1, 1, 1, None, 0, 0, 0, 0, 0])
+
+    def test_find_intersection_x10_l4(self):
+        li1 = LayoutIndex(2, 991)
+        li2 = LayoutIndex(1, 992)
+        r = SolveMethod.find_intersection([li1, li2], [1, -1, -1, 1, -1], 1)
+
+        self.assertEqual(r, [1, 1, 0, 1, 0])
+
+    def test_find_intersection_x10_l4(self):
+        li1 = LayoutIndex(2, 991)
+        li2 = LayoutIndex(1, 992)
+        r = SolveMethod.find_intersection([li1, li2], [1, -1, -1, 1, -1], 1)
+
+        self.assertEqual(r, [1, 1, 0, 1, 0])
+
+    def test_find_intersection_x6_l1_1(self):
+        li1 = LayoutIndex(1, 991)
+        li2 = LayoutIndex(1, 992)
+        r = SolveMethod.find_intersection([li1, li2], [-1, 1, -1, -1, 1, -1], 1)
+
+        self.assertEqual(r, [0, 1, 0, 0, 1, 0])
 
 if __name__ == '__main__':
     unittest.main()
