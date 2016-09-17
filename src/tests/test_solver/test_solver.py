@@ -22,34 +22,68 @@ class TestSolver(TestCaseBasedOnData):
             s1 = mySolver.solve(n0)
             print s1
 
-            self.assertEqual(s0, s1)
+            self.assertEqual(s0, s1, "Solution failed: %s" % solution)
 
 class TestSolveMethod(TestCaseBasedOnData):
+    def test_cells_amount_1(self):
+        li1 = LayoutIndex(3, 991)
+        r = SolveMethod.cells_amount([li1], 1)
+        self.assertEqual(r, 3)
+
+    def test_cells_amount_2(self):
+        li1 = LayoutIndex(3, 991)
+        li2 = LayoutIndex(6, 991)
+        r = SolveMethod.cells_amount([li1, li2], 1)
+        self.assertEqual(r, 10)
+
+    def test_cells_amount_3(self):
+        li1 = LayoutIndex(3, 991)
+        li2 = LayoutIndex(6, 991)
+        r = SolveMethod.cells_amount([li1, li2], 0)
+        self.assertEqual(r, 9)
+
+    def test_cells_amount_4(self):
+        li1 = LayoutIndex(3, 991)
+        li2 = LayoutIndex(6, 991)
+        li3 = LayoutIndex(13, 991)
+        r = SolveMethod.cells_amount([li1, li2, li3], 1)
+        self.assertEqual(r, 24)
     #
     # find nearest pos
     #
     def test_find_nearest_pos_1(self):
         # index, layout, line
         li1 = LayoutIndex(3, 991)
-        r = SolveMethod.find_nearest_pos(li1, [-1, -1, 1, 1, 1, -1])
+        r = SolveMethod.find_nearest_pos(li1, [-1, -1, 1, 1, 1, -1], False)
         self.assertEqual(r, 2)
 
     def test_find_nearest_pos_2(self):
         # index, layout, line
         li1 = LayoutIndex(3, 991)
-        r = SolveMethod.find_nearest_pos(li1, [-1, -1, -1, 1, 1, -1])
+        r = SolveMethod.find_nearest_pos(li1, [-1, -1, -1, 1, 1, -1], False)
         self.assertEqual(r, 2)
 
     def test_find_nearest_pos_3(self):
         # index, layout, line
         li1 = LayoutIndex(3, 991)
-        r = SolveMethod.find_nearest_pos(li1, [-1, -1, -1, 1, 1, 1])
+        r = SolveMethod.find_nearest_pos(li1, [-1, -1, -1, 1, 1, 1], False)
         self.assertEqual(r, 3)
 
     def test_find_nearest_pos_4(self):
         li1 = LayoutIndex(2, 991)
-        self.assertRaises(IndexOutOfRange, SolveMethod.find_nearest_pos, li1, [-1, 1, 1, 1, 1, -1])
+        self.assertRaises(IndexOutOfRange, SolveMethod.find_nearest_pos, li1, [-1, 1, 1, 1, 1, -1], False)
 
+    def test_find_nearest_pos_5(self):
+        # index, layout, line
+        li1 = LayoutIndex(3, 991)
+        r = SolveMethod.find_nearest_pos(li1, [-1, -1, -1, -1, 1, 1], True)
+        self.assertEqual(r, 0)
+
+    def test_find_nearest_pos_6(self):
+        # index, layout, line
+        li1 = LayoutIndex(3, 991)
+        r = SolveMethod.find_nearest_pos(li1, [-1, -1, 1, 1, -1, -1], True)
+        self.assertEqual(r, 1)
 
     #
     # fill line
@@ -102,6 +136,18 @@ class TestSolveMethod(TestCaseBasedOnData):
 
         self.assertEqual(r, [(li1, None), li1, li1, li1])
 
+    def test_fill_full_line_7(self):
+        li1 = LayoutIndex(4, 991)
+        r = SolveMethod.fill_line([li1], [-1, -1, -1, -1, -1, -1, -1, 1, -1], 1)
+
+        self.assertEqual(r, [(li1, None), (li1, None), (li1, None), (li1, None), li1, li1, li1, li1, (li1, None)])
+
+    def test_fill_full_line_8(self):
+        li1 = LayoutIndex(4, 991)
+        r = SolveMethod.fill_line([li1], [-1, 1, -1, -1, -1, -1, -1, -1, -1], 1)
+
+        self.assertEqual(r, [li1, li1, li1, li1, (li1, None), (li1, None), (li1, None), (li1, None), (li1, None)])
+
     #
     # find intersection
     #
@@ -138,12 +184,27 @@ class TestSolveMethod(TestCaseBasedOnData):
 
         self.assertEqual(r, [None, None, None, None, 1, 1, 1, 1, 1, None, None, None, None])
 
-
     def test_find_intersection_5_l3(self):
         li1 = LayoutIndex(3, 991)
         r = SolveMethod.find_intersection([li1], [-1, 1, 1, 1, -1], 1)
 
         self.assertEqual(r, [0, 1, 1, 1, 0])
+
+    def test_find_intersection_13_l2_1_1_2(self):
+        li1 = LayoutIndex(2, 991)
+        li2 = LayoutIndex(1, 992)
+        li3 = LayoutIndex(1, 993)
+        li4 = LayoutIndex(2, 994)
+        r = SolveMethod.find_intersection([li1, li2, li3, li4], [0, 0, -1, 1, 0, -1, 0, -1, 0, 1, -1, 0, 0], 1)
+
+        self.assertEqual(r, [0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0])
+
+    def test_find_intersection_l5_l2(self):
+        li1 = LayoutIndex(2, 991)
+        r = SolveMethod.find_intersection([li1], [-1]*5, 1)
+
+        self.assertEqual(r, [None]*5)
+
 
 if __name__ == '__main__':
     unittest.main()

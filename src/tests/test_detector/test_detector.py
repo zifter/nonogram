@@ -16,7 +16,7 @@ class TestDetector(TestCaseBasedOnData):
             n0 = Nonogram.load_from_file(layout)
             n1 = detector.recognize(image)
 
-            self.assertEqual(n0, n1)
+            self.assertEqual(n0, n1, "Detection failed: %s" % layout)
 
 if __name__ == '__main__':
     unittest.main()
