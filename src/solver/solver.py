@@ -1,4 +1,5 @@
 from solution_step import SolutionStep
+from base.solution import SolutionPrinter
 
 from copy import copy, deepcopy
 
@@ -39,7 +40,7 @@ class Solver(object):
             if self.step == 49:
                 pass
             if func(layout, line, space):
-                print self.ss.solution()
+                print SolutionPrinter.pretty_string(self.ss.solution(), selected_row=i)
             self.step += 1
 
         for i in xrange(x_size):
@@ -48,7 +49,7 @@ class Solver(object):
             if self.step == 49:
                 pass
             if func(layout, line, space):
-                print self.ss.solution()
+                print SolutionPrinter.pretty_string(self.ss.solution(), selected_column=i)
             self.step += 1
 
     def find_intersection(self, layout, line, space):
@@ -64,10 +65,10 @@ class Solver(object):
 
 class SolveMethod(object):
     @staticmethod
-    def cells_amount(layout, space):
+    def cells_amount(layout, space, plusOneSpace=False):
         offsetFromEnd = 0
         if layout:
-            offsetFromEnd = space * (len(layout) - 1)
+            offsetFromEnd = space * (len(layout) - int(not plusOneSpace) )
             for v in layout:
                 offsetFromEnd += v.value()
 
@@ -122,7 +123,7 @@ class SolveMethod(object):
         if index1:
             if index2:
                 if index1.id() == index2.id():
-                    raise SolverException()
+                    raise SolverException("Check indexes in you tests!")
 
                 if index1.id() < index2.id():
                     return (index1, index2)
@@ -137,7 +138,67 @@ class SolveMethod(object):
             return (index2, None)
 
     @staticmethod
-    def find_nearest_pos(index, line, nextIndexExist):
+    def get_minimum_offset(index, line, space):
+        if index.value() > len(line):
+            raise LineOutOfRange
+
+        offset = 0
+        suitableCells = 0
+        for i in xrange(len(line)):
+            if line[i] == -1 or line[i] == index.color():
+                suitableCells += 1
+            elif line[i] == 0:
+                suitableCells = 0
+            elif line[i] != index.color():
+                raise SolverException("Cross with other color")
+
+            if suitableCells >= index.value():
+                spaceOk = True
+                for j in xrange(space):
+                    if i+j+1 >= len(line):
+                        break
+
+                    v = line[i+j+1]
+                    if not(v == -1 or v == 0):
+                        spaceOk = False
+                        break
+
+                if spaceOk:
+                    offset = i + space + 1
+                    break
+
+
+        return offset
+
+    @staticmethod
+    def get_offset_from_end(layout, line, space):
+        if not layout:
+            return (0, [])
+
+        info = {}
+        offset = 0
+        newLayout = []
+        r = SolveMethod.fill_line(list(reversed(layout)), list(reversed(line)), space)
+        firstIndex = layout[0]
+        for i in xrange(len(r)):
+            if r[i] == firstIndex:
+                offset = i+1
+            if r[i] not in info:
+                info[r[i]] =  0
+            info[r[i]] += 1
+
+        for i in xrange(len(layout)):
+            index = layout[i]
+            if info[index] == index.value():
+                newLayout = layout[i+1:]
+                break
+
+        offset += space
+
+        return (offset, newLayout)
+
+    @staticmethod
+    def get_offset_from_start(index, line, nextIndexExist):
         # TODO: color
         firstEmpty = None
         emptyCellsAmount = 0
@@ -166,7 +227,7 @@ class SolveMethod(object):
             if pe - ps > index.value():
                 if nextIndexExist:
                     # it's mean we found another index, move back
-                    pe = SolveMethod.find_nearest_pos(index, line[0:ps], nextIndexExist)
+                    pe = SolveMethod.get_offset_from_start(index, line[0:ps], nextIndexExist)
                 else:
                     raise IndexOutOfRange
 
@@ -197,14 +258,14 @@ class SolveMethod(object):
         index = layout[0]
         next_index = layout[1] if (len(layout) > 1) else None
         while index:
-            next_indexes = layout[i+1:]
-            offsetFromEnd = SolveMethod.cells_amount(next_indexes, space) + space if next_indexes else 0
-
-            offsetStartPoint = SolveMethod.find_nearest_pos(index, line[p:line_len - offsetFromEnd], next_indexes)
-            if offsetStartPoint > 0:
-                for v in xrange(p, p + offsetStartPoint):
+            nextLayout = layout[i+1:]
+            endLine = line[p + SolveMethod.get_minimum_offset(index, line[p:], space):]
+            (offsetFromEnd, nextLayout) = SolveMethod.get_offset_from_end(nextLayout, endLine, space)
+            offsetFromeStart = SolveMethod.get_offset_from_start(index, line[p:line_len - offsetFromEnd], len(nextLayout) != 0)
+            if offsetFromeStart > 0:
+                for v in xrange(p, p + offsetFromeStart):
                     result[v] = SolveMethod.__make_space_index(prev_index, index)
-                p += offsetStartPoint
+                p += offsetFromeStart
 
             currentLineForIndex = line[p:line_len - offsetFromEnd]
             suitableLineUps = SolveMethod.get_suitable_line_up(index, currentLineForIndex, space)
@@ -231,11 +292,19 @@ class SolveMethod(object):
             p += offset
 
             mergedLineups = None
+            spaceSize = space
             if next_index is None:
                 mergedLineups = SolveMethod.merge_lineups(suitableLineUps)[offset:]
-                space = len(result) - p
+                spaceSize = len(result) - p
 
-            for v in xrange(space):
+            # if line[p-1] == index.color():
+            #     for v in xrange(space):
+            #         result[p] = SolveMethod.__make_space_index(index, next_index)
+            #         p += 1
+            #
+            #     spaceSize -= space
+
+            for v in xrange(spaceSize):
                 if next_index is not None and p > len(result):
                     raise LineOutOfRange()
 

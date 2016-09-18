@@ -18,23 +18,13 @@ class Solution(object):
         return not self.__eq__(other)
 
     def __str__(self):
-        s = ""
-        x_size, y_size = self.matrix.shape
-        if not x_size or not y_size:
-            return "|e|"
+        return SolutionPrinter.pretty_string(self)
 
-        for i in xrange(x_size):
-            s += '|'
-            for j in xrange(y_size):
-                if self.matrix[i, j] > 0:
-                    s += '#|'
-                elif self.matrix[i, j] == 0:
-                    s += ' |'
-                else:
-                    s += '?|'
-            s += '\n'
+    def shape(self):
+        return self.matrix.shape
 
-        return s
+    def value(self, x, y):
+        return self.matrix[x, y]
 
     def col(self, index):
         return self.matrix.A[:, index]
@@ -57,3 +47,35 @@ class Solution(object):
     def save_to_file(self, filepath):
         with open(filepath, 'w') as outfile:
             json.dump(self.save(), outfile, indent=4, sort_keys=False)
+
+
+class SolutionPrinter():
+    @staticmethod
+    def pretty_string(solution, selected_row=None, selected_column=None):
+        s = ""
+        x_size, y_size = solution.shape()
+        if not x_size or not y_size:
+            return "|e|"
+
+        for i in xrange(x_size):
+            s += '|'
+            for j in xrange(y_size):
+                if solution.value(i, j) > 0:
+                    s += '#'
+                elif solution.value(i, j) == 0:
+                    s += ' '
+                else:
+                    s += '?'
+
+                delimiter = '|'
+                if i == selected_row:
+                    delimiter = '\\'
+                elif (j+1) == selected_column:
+                    delimiter = '>'
+
+                s += delimiter
+
+            s += '\n'
+
+        return s
+

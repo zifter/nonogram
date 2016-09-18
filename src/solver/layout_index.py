@@ -1,11 +1,17 @@
 from base.solution import Solution
 
 class LayoutIndex(object):
-    def __init__(self, value, id, color=1):
-        self._id = id
+    uid = 1000
+    def __init__(self, value, color=1):
+        self._id = LayoutIndex.__getId()
         self._color = color
         self._value = value
         self._done = False
+
+    @staticmethod
+    def __getId():
+        LayoutIndex.uid += 1
+        return LayoutIndex.uid
 
     def __repr__(self):
         return "[%s, %s, %s]" % (self.value(), self.color(), self.id())

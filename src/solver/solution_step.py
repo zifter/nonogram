@@ -18,10 +18,9 @@ class SolutionStep(object):
 
 
     def __getIndex(self, value):
-        uid = self._uid
         self._uid = self._uid + 1
-        index = LayoutIndex(value, self._uid)
-        self._idToIndex[self._uid] = index
+        index = LayoutIndex(value)
+        self._idToIndex[index.id()] = index
 
         return index
 
