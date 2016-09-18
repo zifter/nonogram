@@ -58,7 +58,11 @@ class SolutionPrinter():
             return "|e|"
 
         for i in xrange(x_size):
-            s += '|'
+            delimiter = '|'
+            if i == selected_row:
+                delimiter = '\\'
+
+            s += delimiter
             for j in xrange(y_size):
                 if solution.value(i, j) > 0:
                     s += '#'
@@ -70,7 +74,7 @@ class SolutionPrinter():
                 delimiter = '|'
                 if i == selected_row:
                     delimiter = '\\'
-                elif (j+1) == selected_column:
+                elif (j + 1) == selected_column:
                     delimiter = '>'
 
                 s += delimiter
