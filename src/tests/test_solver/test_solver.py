@@ -370,5 +370,14 @@ class TestSolveMethod(TestCaseBasedOnData):
 
         self.assertEqual(r, [0, 1, 0, 0, 1, 0])
 
+    def test_find_intersection_v2_x13_l2_1_1_2(self):
+        li1 = LayoutIndex(2)
+        li2 = LayoutIndex(1)
+        li3 = LayoutIndex(1)
+        li4 = LayoutIndex(2)
+        r = SolveMethod.find_intersection([li1, li2, li3, li4], [-1, -1, -1, 1, 0, 1, 0, 1, 0, 1, -1, -1, -1], 1)
+
+        self.assertEqual(r, [0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0])
+
 if __name__ == '__main__':
     unittest.main()

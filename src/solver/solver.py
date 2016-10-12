@@ -25,32 +25,36 @@ class Solver(object):
         ss = SolutionStep(self.nonogram)
         self.ss = ss
 
-        for i in xrange(10):
-            self.execute_for_each_line(self.find_intersection)
+        goal = True
+        while goal:
+            goal = self.execute_for_each_line(self.find_intersection)
 
         self.ss = None
         return ss.solution()
 
     def execute_for_each_line(self, func):
+        stepToGoal = False
         x_size, y_size = self.ss.shape()
         space = self.nonogram.space_size()
         for i in xrange(y_size):
             layout, line = self.ss.row_layout_and_solution(i)
             print self.step
-            if self.step == 49:
-                pass
-            if func(layout, line, space):
+            v = func(layout, line, space)
+            if v:
                 print SolutionPrinter.pretty_string(self.ss.solution(), selected_row=i)
+                stepToGoal = v or stepToGoal
             self.step += 1
 
         for i in xrange(x_size):
             layout, line = self.ss.col_layout_and_solution(i)
             print self.step
-            if self.step == 49:
-                pass
-            if func(layout, line, space):
+            v = func(layout, line, space)
+            if v:
                 print SolutionPrinter.pretty_string(self.ss.solution(), selected_column=i)
+                stepToGoal = v or stepToGoal
             self.step += 1
+
+        return stepToGoal
 
     def find_intersection(self, layout, line, space):
         result_line = SolveMethod.find_intersection(layout, [int(i) for i in line], space)
@@ -320,8 +324,11 @@ class SolveMethod(object):
             index = next_index
             next_index = layout[i + 1] if len(layout) > (i + 1) else None
 
-
         return result
+
+    @staticmethod
+    def cross_out(layout, line, space):
+        pass
 
     @staticmethod
     def find_intersection(layout, line, space):
