@@ -57,7 +57,7 @@ class Solver(object):
         return stepToGoal
 
     def find_intersection(self, layout, line, space):
-        result_line = SolveMethod.find_intersection(layout, [int(i) for i in line], space)
+        result_line = SolveMethod.find_intersection(layout, [i.v for i in line], space)
         stepToGoal = False
         for i in xrange(len(result_line)):
             if result_line[i] is not None and line[i] != result_line[i]:
