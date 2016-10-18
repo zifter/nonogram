@@ -32,44 +32,57 @@ class Solver(object):
         self.ss = None
         return ss.solution()
 
+    def apply(self, type, r):
+        for i, index in r:
+            if SolutionStep.ROW == type:
+                self.ss.set_row(i, index)
+            else:
+                self.ss.set_col(i, index)
+
     def execute_for_each_line(self, func):
         stepToGoal = False
         x_size, y_size = self.ss.shape()
         space = self.nonogram.space_size()
         for i in xrange(y_size):
-            layout, line = self.ss.row_layout_and_solution(i)
+            layout, line = self.ss.row_layout(i), self.ss.row_lineup(i)
             print self.step
-            v = func(layout, line, space)
-            if v:
+            r = func(layout, line, space)
+            self.apply(SolutionStep.ROW, r)
+            if r:
                 print SolutionPrinter.pretty_string(self.ss.solution(), selected_row=i)
-                stepToGoal = v or stepToGoal
+                stepToGoal = r or stepToGoal
             self.step += 1
 
         for i in xrange(x_size):
-            layout, line = self.ss.col_layout_and_solution(i)
+            layout, line = self.ss.col_layout(i), self.ss.col_lineup(i)
             print self.step
-            v = func(layout, line, space)
-            if v:
+            r = func(layout, line, space)
+            self.apply(SolutionStep.COL, r)
+            if r:
                 print SolutionPrinter.pretty_string(self.ss.solution(), selected_column=i)
-                stepToGoal = v or stepToGoal
+                stepToGoal = r or stepToGoal
             self.step += 1
 
         return stepToGoal
 
     def find_intersection(self, layout, line, space):
-        result_line = SolveMethod.find_intersection(layout, [i.v for i in line], space)
-        stepToGoal = False
+        result_line = SolveMethod.find_intersection(layout, line, space)
+
+        r = dict()
         for i in xrange(len(result_line)):
             if result_line[i] is not None and line[i] != result_line[i]:
-                line[i] = result_line[i]
-                stepToGoal = True
+                r[i] = result_line[i]
 
-        return stepToGoal
+        return r
 
 
 class SolveMethod(object):
+    class VAL:
+        UNDEFINED = -1,
+        SPACE = 0,
+
     @staticmethod
-    def cells_amount(layout, space, plusOneSpace=False):
+    def layout_min_size(layout, space, plusOneSpace=False):
         offsetFromEnd = 0
         if layout:
             offsetFromEnd = space * (len(layout) - int(not plusOneSpace) )
@@ -87,14 +100,14 @@ class SolveMethod(object):
 
         firstPosOfIndex = len(line)
         for i in xrange(len(line)-index.value() + 1):
-            if line[i] == index.color():
+            if line[i] == index:
                 firstPosOfIndex = i + index.value()
                 break
 
         for i in xrange(0, firstPosOfIndex - index.value() + 1):
             positionIsSuitable = True
             for v in line[i:i+index.value()]:
-                if not (v == -1 or v == index.color()):
+                if not (v == -1 or v == index):
                     positionIsSuitable = False
                     break
 
@@ -149,11 +162,11 @@ class SolveMethod(object):
         offset = 0
         suitableCells = 0
         for i in xrange(len(line)):
-            if line[i] == -1 or line[i] == index.color():
+            if line[i] == -1 or line[i] == index:
                 suitableCells += 1
             elif line[i] == 0:
                 suitableCells = 0
-            elif line[i] != index.color():
+            elif line[i] != index:
                 raise SolverException("Cross with other color")
 
             if suitableCells >= index.value():
@@ -213,7 +226,7 @@ class SolveMethod(object):
                 if firstEmpty is None:
                     firstEmpty = i
                 emptyCellsAmount += 1
-            elif line[i] == index.color():
+            elif line[i] == index:
                 if not ps:
                     ps = i
             elif ps:
@@ -245,15 +258,15 @@ class SolveMethod(object):
         """
 
         :param layout: [LayoutIndex, ..]
-        :param line:  [0, 0, 0, 1, ]. 0 - undefined, value > 0 - it's a index of layout index
+        :param line:  [li, li, li, 1, ]
         :param space: size of space
         :return: [LayoutIndex] suitable line for this layout
         """
         if not layout:
             return [(None, None)] * len(line)
 
-        # print line
-        # print layout
+        print line
+        print layout
         result = deepcopy(line)
         line_len = len(result)
         p = 0
@@ -327,10 +340,6 @@ class SolveMethod(object):
         return result
 
     @staticmethod
-    def cross_out(layout, line, space):
-        pass
-
-    @staticmethod
     def find_intersection(layout, line, space):
         forward_line = SolveMethod.fill_line(layout, line, space)
         reversed_line = SolveMethod.fill_line(list(reversed(layout)), list(reversed(line)), space)[::-1]
@@ -339,6 +348,6 @@ class SolveMethod(object):
         for i in xrange(len(line)):
             if forward_line[i] == reversed_line[i] and reversed_line[i] is not None:
                 # -1 - space
-                result[i] = 0 if type(forward_line[i]) is tuple else forward_line[i].color()
+                result[i] = 0 if type(forward_line[i]) is tuple else forward_line[i]
 
         return result

@@ -55,7 +55,7 @@ class TestSolutionStep(TestCaseBasedOnData):
         x, y = ss0.shape()
 
         for i in xrange(x):
-            l, s = ss0.row_layout_and_solution(i)
+            l, s = ss0.row_layout(i), ss0.row_lineup(i)
             rl = n0.row_layout(i)
 
             for j in xrange(len(rl)):
