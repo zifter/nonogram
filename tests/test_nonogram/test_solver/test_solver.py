@@ -4,8 +4,8 @@ import unittest
 
 from test_nonogram.nonogram_testcase import TestNonogram
 
-from nonogram.base.nonogram_obj import Nonogram
-from nonogram.base.solution import Solution
+from nonogram.nonogram_obj import Nonogram
+from nonogram.solution import Solution
 from nonogram.solver.solver import *
 from nonogram.solver.layout_index import LayoutIndex
 

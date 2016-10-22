@@ -1,6 +1,6 @@
 from copy import copy, deepcopy
 
-from nonogram.base.solution import SolutionPrinter
+from nonogram.solution import SolutionPrinter
 
 from solution_step import SolutionStep
 

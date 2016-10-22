@@ -4,7 +4,7 @@ import unittest
 
 from test_nonogram.nonogram_testcase import TestNonogram
 
-from nonogram.base.nonogram_obj import Nonogram
+from nonogram.nonogram_obj import Nonogram
 from nonogram.solver.solution_step import SolutionStep
 
 class TestSolutionStep(TestNonogram):

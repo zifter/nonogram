@@ -3,7 +3,7 @@ import env
 import unittest
 
 from test_nonogram.nonogram_testcase import TestNonogram
-from nonogram.base.matrix import Matrix
+from common.matrix import Matrix
 
 #--------------------------------------------------------------------------
 class TestMatrixClass(TestNonogram):

@@ -2,7 +2,7 @@ import json
 
 from collections import OrderedDict
 
-from nonogram.base.matrix import Matrix
+from common.matrix import Matrix
 
 class _CustomEncoder(json.JSONEncoder):
     """

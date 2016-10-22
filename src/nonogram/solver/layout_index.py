@@ -1,4 +1,4 @@
-from nonogram.base.solution import Solution
+from nonogram.solution import Solution
 
 class LayoutIndex(object):
     uid = 1000

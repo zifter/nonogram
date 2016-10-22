@@ -5,7 +5,7 @@ import tempfile
 import os
 
 from test_nonogram.nonogram_testcase import TestNonogram
-from nonogram.base.nonogram_obj import Nonogram
+from nonogram.nonogram_obj import Nonogram
 
 #--------------------------------------------------------------------------
 class TestNonogramClass(TestNonogram):
