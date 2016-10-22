@@ -2,12 +2,12 @@ import env
 
 import unittest
 
-from tests.testcase_based_on_data import TestCaseBasedOnData
+from test_nonogram.nonogram_testcase import TestNonogram
 
-from base.nonogram import Nonogram
-from solver.solution_step import SolutionStep
+from nonogram.base.nonogram_obj import Nonogram
+from nonogram.solver.solution_step import SolutionStep
 
-class TestSolutionStep(TestCaseBasedOnData):
+class TestSolutionStep(TestNonogram):
     def test_from_nonogram(self):
         n0 = Nonogram("black", [[1], [2], [3, 4]], [[1, 3], [2, 5]])
         ss0 = SolutionStep(n0)

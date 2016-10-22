@@ -4,10 +4,11 @@ import unittest
 import tempfile
 import os
 
-from base.solution import Solution
+from test_nonogram.nonogram_testcase import TestNonogram
+from nonogram.base.solution import Solution
 
 #--------------------------------------------------------------------------
-class TestSolutionClass(unittest.TestCase):
+class TestSolutionClass(TestNonogram):
     def test_load(self):
         s0 = Solution([[1, 2], [3, 4], [5, 6]])
         s1 = Solution.load({"matrix": [[1, 2], [3, 4], [5, 6]]})

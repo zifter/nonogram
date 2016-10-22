@@ -1,6 +1,6 @@
-from base.solution import Solution
-from base.matrix import Matrix
-from layout_index import LayoutIndex, SolutionCell
+from nonogram.base.solution import Solution
+from nonogram.base.matrix import Matrix
+from nonogram.solver.layout_index import LayoutIndex, SolutionCell
 
 class SolutionStep(object):
     ROW = 0

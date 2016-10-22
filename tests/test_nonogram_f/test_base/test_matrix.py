@@ -1,13 +1,12 @@
 import env
 
 import unittest
-import tempfile
-import os
 
-from base.matrix import Matrix
+from test_nonogram.nonogram_testcase import TestNonogram
+from nonogram.base.matrix import Matrix
 
 #--------------------------------------------------------------------------
-class TestMatrixClass(unittest.TestCase):
+class TestMatrixClass(TestNonogram):
     def test_ctor(self):
         m = Matrix.from_shape(3, 5)
 

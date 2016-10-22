@@ -1,5 +1,5 @@
-from solution_step import SolutionStep
-from base.solution import SolutionPrinter
+from nonogram.solution_step import SolutionStep
+from nonogram.base.solution import SolutionPrinter
 
 from copy import copy, deepcopy
 

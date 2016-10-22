@@ -5,11 +5,13 @@ import os
 import re
 from os.path import join
 
-def abs_path(rel):
+def _abs_path(rel):
     return os.path.realpath(os.path.join(os.path.dirname(__file__), rel))
 
 class TestCaseBasedOnData(unittest.TestCase):
-    data_path = abs_path("data")
+    def __init__(self, test_name, rel_path):
+        unittest.TestCase.__init__(self, test_name)
+        self.data_path = join(_abs_path("../data"), rel_path)
 
     def getLayoutData(self):
         result = []

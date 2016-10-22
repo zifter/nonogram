@@ -1,7 +1,8 @@
 import json
 
 from collections import OrderedDict
-from matrix import Matrix
+
+from nonogram.base.matrix import Matrix
 
 class _CustomEncoder(json.JSONEncoder):
     """

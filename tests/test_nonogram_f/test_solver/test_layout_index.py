@@ -2,11 +2,11 @@ import env
 
 import unittest
 
-from tests.testcase_based_on_data import TestCaseBasedOnData
+from test_nonogram.nonogram_testcase import TestNonogram
 
-from solver.layout_index import *
+from nonogram.solver.layout_index import *
 
-class TestLayoutIndex(TestCaseBasedOnData):
+class TestLayoutIndex(TestNonogram):
     def test_cross_out(self):
         index = LayoutIndex(4)
         index.cross_out()
@@ -18,7 +18,7 @@ class TestLayoutIndex(TestCaseBasedOnData):
 
         self.assertNotEqual(li1, li2)
 
-class TestSmartTuple(TestCaseBasedOnData):
+class TestSmartTuple(TestNonogram):
     def test_smart_tuple_equlity(self):
         sm1 = SmartTuple(1, 2)
         sm2 = SmartTuple(2, 3)
