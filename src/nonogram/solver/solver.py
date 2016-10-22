@@ -1,7 +1,8 @@
-from nonogram.solution_step import SolutionStep
+from copy import copy, deepcopy
+
 from nonogram.base.solution import SolutionPrinter
 
-from copy import copy, deepcopy
+from solution_step import SolutionStep
 
 class SolverException(RuntimeError):
     pass
