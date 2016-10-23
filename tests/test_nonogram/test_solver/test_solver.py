@@ -2,14 +2,14 @@ import env
 
 import unittest
 
-from test_nonogram.nonogram_testcase import TestNonogram
+from test_nonogram.testcase_nonogram import TestCaseNonogram
 
 from nonogram.nonogram_obj import Nonogram
 from nonogram.solution import Solution
 from nonogram.solver.solver import *
 from nonogram.solver.layout_index import LayoutIndex
 
-class TestSolver(TestNonogram):
+class TestSolver(TestCaseNonogram):
     def test_solve_and_compare(self):
         test_data = self.getSolutionData()
         mySolver = Solver()
@@ -24,7 +24,7 @@ class TestSolver(TestNonogram):
 
             self.assertEqual(s0, s1, "Solution failed: %s" % solution)
 
-class TestSolveMethod(TestNonogram):
+class TestSolveMethod(TestCaseNonogram):
     def test_min_layout_size_1(self):
         li1 = LayoutIndex(3)
         r = SolveMethod.layout_min_size([li1], 1)

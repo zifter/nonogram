@@ -2,11 +2,11 @@ import env
 
 import unittest
 
-from test_nonogram.nonogram_testcase import TestNonogram
+from test_nonogram.testcase_nonogram import TestCaseNonogram
 
 from nonogram.solver.layout_index import *
 
-class TestLayoutIndex(TestNonogram):
+class TestLayoutIndex(TestCaseNonogram):
     def test_cross_out(self):
         index = LayoutIndex(4)
         index.cross_out()
@@ -18,7 +18,7 @@ class TestLayoutIndex(TestNonogram):
 
         self.assertNotEqual(li1, li2)
 
-class TestSmartTuple(TestNonogram):
+class TestSmartTuple(TestCaseNonogram):
     def test_smart_tuple_equlity(self):
         sm1 = SmartTuple(1, 2)
         sm2 = SmartTuple(2, 3)

@@ -2,12 +2,12 @@ import env
 
 import unittest
 
-from test_nonogram.nonogram_testcase import TestNonogram
+from test_nonogram.testcase_nonogram import TestCaseNonogram
 
 from nonogram.nonogram_obj import Nonogram
 from nonogram.detector.detector import Detector
 
-class TestDetector(TestNonogram):
+class TestDetector(TestCaseNonogram):
     def test_detect_and_compare(self):
         test_data = self.getLayoutData()
         detector = Detector()

@@ -2,11 +2,11 @@ import env
 
 import unittest
 
-from test_nonogram.nonogram_testcase import TestNonogram
+from test_nonogram.testcase_nonogram import TestCaseNonogram
 from common.matrix import Matrix
 
 #--------------------------------------------------------------------------
-class TestMatrixClass(TestNonogram):
+class TestMatrixClass(TestCaseNonogram):
     def test_ctor(self):
         m = Matrix.from_shape(3, 5)
 

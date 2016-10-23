@@ -4,11 +4,11 @@ import unittest
 import tempfile
 import os
 
-from test_nonogram.nonogram_testcase import TestNonogram
+from test_nonogram.testcase_nonogram import TestCaseNonogram
 from nonogram.nonogram_obj import Nonogram
 
 #--------------------------------------------------------------------------
-class TestNonogramClass(TestNonogram):
+class TestNonogramClass(TestCaseNonogram):
     def test_equal_to(self):
         n0     = Nonogram("black", [[1], [2], [3, 4]]        , [[1, 3], [2, 5]])
         n_type = Nonogram("color", [[1], [2], [3, 4]]        , [[1, 3], [2, 5]])
