@@ -1,10 +1,14 @@
 import json
-
+import math
 from common.matrix import Matrix
 
 class SudokuDescr(object):
     def __init__(self, matrix=None):
         self.matrix = Matrix(matrix=matrix)
+        y_size = int(math.sqrt(self.matrix.shape[0]))
+        x_size = int(math.sqrt(self.matrix.shape[1]))
+        self._box_shape = (x_size, y_size)
+        self._values = set([i + 1 for i in xrange(x_size*y_size)])
 
     def __eq__(self, other):
         return other is not None \
@@ -15,6 +19,13 @@ class SudokuDescr(object):
 
     def __str__(self):
         return SudokuDescrPrinter.pretty_string(self)
+
+    def values(self):
+        return self._values
+
+    def box_shape(self):
+        return self._box_shape
+
 
     def save(self):
         return {"matrix", self.matrix}
@@ -37,10 +48,11 @@ class SudokuDescrPrinter():
     @staticmethod
     def pretty_string(descr):
         s = ""
+        x_box_size, y_box_size = descr.box_shape()
         x_size, y_size = descr.matrix.shape
         for y in xrange(y_size):
-            if y % 3 == 0 and y > 0:
-                s += '-'*(y_size*4/3) + '\n'
+            if y % y_box_size == 0 and y > 0:
+                s += '-'*(y_size + y_size/x_box_size) + '\n'
 
             for x in xrange(x_size):
                 v = descr.matrix.value(x, y)
@@ -49,7 +61,7 @@ class SudokuDescrPrinter():
                 else:
                     s += "."
 
-                if (x + 1) % 3 == 0:
+                if (x + 1) % x_box_size == 0:
                     s += '|'
 
             s += '\n'

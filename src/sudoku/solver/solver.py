@@ -1,24 +1,27 @@
 from copy import copy, deepcopy
 
 from sudoku.solution import Solution
-from probability_policy import CheckProbabilityLinePolicy
+from probability_policy import ProbabilitySolverPolicy
 
 class SudokuSolverException(RuntimeError):
     pass
 
 class Solver(object):
     def __init__(self):
-        self.policies = [CheckProbabilityLinePolicy()]
+        self.policies = [ProbabilitySolverPolicy()]
 
     def solve(self, descr):
-        self.solution = Solution(descr)
+        solution = Solution(descr)
+        steps = 0
 
         l1, l2 = 0, None
         while l1 != l2:
-            l1 = len(self.solution.steps)
+            l1 = len(solution.steps)
             for p in self.policies:
-                p.solve(self.solution)
+                p.solve(solution)
 
-            l2 = len(self.solution.steps)
+            l2 = len(solution.steps)
 
-        return self.solution
+            steps += 1
+
+        return solution, steps

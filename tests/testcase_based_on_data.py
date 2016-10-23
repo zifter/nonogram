@@ -26,6 +26,6 @@ class TestCaseBasedOnData(unittest.TestCase):
         folders = os.listdir(self.data_path)
 
         for f in folders:
-            result.append((join(self.data_path, f, "layout.json"), join(self.data_path, f, 'solution.json')))
+            result.append((f, join(self.data_path, f, "layout.json"), join(self.data_path, f, 'solution.json')))
 
         return result

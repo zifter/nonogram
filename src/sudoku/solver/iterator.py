@@ -28,12 +28,12 @@ class IteratorLine(Iterator):
             return self.matrix.row(self.currentIndex)
 
 
-class Iterator3x3(Iterator):
-    def __init__(self, matrix):
+class IteratorBoxToList(Iterator):
+    def __init__(self, matrix, shape):
         Iterator.__init__(self, matrix)
         self.currentX = 0
         self.currentY = 0
-        self.shape = (3, 3)
+        self.shape = shape
 
     def next(self):
         try:
@@ -50,10 +50,5 @@ class Iterator3x3(Iterator):
         if self.currentY >= y or self.currentX >= x:
             return None
 
-        r = []
-        for j in xrange(self.shape[0]):
-            for i in xrange(self.shape[1]):
-                r.append(self.matrix.item(self.currentX + i, self.currentY + j))
-
-        return r
+        return self.matrix.sub_matrix(self.currentX, self.currentY, self.shape).to_list()
 

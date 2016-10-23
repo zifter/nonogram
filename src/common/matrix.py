@@ -55,7 +55,7 @@ class Matrix(object):
     def from_matrix(matrix):
         return Matrix(matrix=matrix)
 
-    def __init__(self, matrix=None, x=None, y=None, default_func=None):
+    def __init__(self, matrix=None, x=None, y=None, default_func=lambda _1, _2: None):
         if matrix and type(matrix) is Matrix:
             self.shape = matrix.shape
             self.data = deepcopy(matrix.data)
@@ -92,6 +92,20 @@ class Matrix(object):
         x, y = self.shape
         self.data = [[Value(default_func(i, j), i, j) for i in xrange(x)] for j in xrange(y)]
 
+    def sub_matrix(self, x, y, shape):
+        m = Matrix(x=shape[0], y=shape[1])
+        for j in xrange(shape[1]):
+            for i in xrange(shape[0]):
+                m.set_item(i, j, self.item(x + i, y + j))
+
+        return m
+
+    def to_list(self):
+        r = []
+        for row in self.data:
+            r += row
+        return r
+
     def row(self, i):
         assert len(self.data) >= i
         return self.data[i]
@@ -112,3 +126,6 @@ class Matrix(object):
 
     def item(self, x, y):
         return self.data[y][x]
+
+    def set_item(self, x, y, item):
+        self.data[y][x] = item

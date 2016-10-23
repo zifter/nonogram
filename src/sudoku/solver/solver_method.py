@@ -1,3 +1,5 @@
+import math
+
 class SolverMethod(object):
     @staticmethod
     def line_layout(line):
@@ -10,6 +12,13 @@ class SolverMethod(object):
                 defined.append(i)
 
         return defined, undefined
+
+    @staticmethod
+    def belonged_box(x, y, matrix, shape):
+        start_x = int(math.floor(x / shape[0])) * shape[0]
+        start_y = int(math.floor(y / shape[1])) * shape[1]
+
+        return matrix.sub_matrix(start_x, start_y, shape)
 
 
 class SolverPolicy(object):
