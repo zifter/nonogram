@@ -68,8 +68,7 @@ class Matrix(object):
             self.data = [[Value(matrix[j][i], i, j) for i in xrange(x)] for j in xrange(y)]
         else:
             self.shape = (x, y)
-            self.reset(default_func)
-
+            self.data = [[Value(default_func(i, j), i, j) for i in xrange(x)] for j in xrange(y)]
 
     def __eq__(self, other):
         if type(other) is not Matrix:
@@ -78,19 +77,19 @@ class Matrix(object):
         if self.shape != other.shape:
             return False
 
-        x, y = self.shape
-        for i in xrange(y):
-            if self.row(i) != other.row(i):
-                return False
+        return self.data == self.data
 
-        return True
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def __iter__(self):
         return MatrixIterator(self)
 
     def reset(self, default_func):
         x, y = self.shape
-        self.data = [[Value(default_func(i, j), i, j) for i in xrange(x)] for j in xrange(y)]
+        for i in xrange(y):
+            for j in xrange(x):
+                self.data[i][j].v = default_func(i, j)
 
     def sub_matrix(self, x, y, shape):
         m = Matrix(x=shape[0], y=shape[1])

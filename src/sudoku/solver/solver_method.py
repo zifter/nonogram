@@ -21,6 +21,7 @@ class SolverMethod(object):
         return matrix.sub_matrix(start_x, start_y, shape)
 
 
+
 class SolverPolicy(object):
     def __init__(self):
         pass

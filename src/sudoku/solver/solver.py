@@ -2,26 +2,41 @@ from copy import copy, deepcopy
 
 from sudoku.solution import Solution
 from probability_policy import ProbabilitySolverPolicy
+from validation_policy import ValidationSolverPolicy
 
 class SudokuSolverException(RuntimeError):
     pass
 
 class Solver(object):
+    class Context():
+        def __init__(self, descr):
+            self.solutions = [Solution(descr)]
+            self.iteration = 0
+            self.haveChanged = True
+
+        def add_step(self, solution, index, value):
+            solution.add_step(index, value)
+            self.haveChanged = True
+
+        def add_solution(self, solution):
+            self.solutions.append(solution)
+
+        def remove_solution(self, solution):
+            self.solutions.remove(solution)
+
+
     def __init__(self):
-        self.policies = [ProbabilitySolverPolicy()]
+        self.policies = [ProbabilitySolverPolicy(), ValidationSolverPolicy()]
 
     def solve(self, descr):
-        solution = Solution(descr)
-        steps = 0
+        context = Solver.Context(descr)
 
-        l1, l2 = 0, None
-        while l1 != l2:
-            l1 = len(solution.steps)
+        while context.haveChanged:
+            context.haveChanged = False
+
             for p in self.policies:
-                p.solve(solution)
+                p.solve(context.solutions[0], context)
 
-            l2 = len(solution.steps)
+            context.iteration += 1
 
-            steps += 1
-
-        return solution, steps
+        return context.solutions[0], context.iteration

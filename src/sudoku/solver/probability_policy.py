@@ -14,6 +14,9 @@ class ProbabilitySolverPolicy(SolverPolicy):
         def possible_values(self):
             return self.poss - self.imposs
 
+        def isReady(self):
+            return not self.poss and not self.imposs
+
         def __repr__(self):
             return str(self.possible_values())
 
@@ -26,18 +29,41 @@ class ProbabilitySolverPolicy(SolverPolicy):
         self.probability_agent = [FindLineProbabilityAgent(), FindBoxProbabilityAgent()]
         self.value_agent = [FindWithOnePossibleValueAgent(), FindUniquePossibleValueInBelongedLineAgent()]
 
-    def solve(self, solution):
+    def solve(self, solution, context):
         x, y = solution.matrix.shape
         probability = Matrix(x=x, y=y, default_func=lambda _1, _2: ProbabilitySolverPolicy.Probability())
 
         for p in self.probability_agent:
             p.find(solution, probability)
 
+        stepFound = False
+        isDone = True
         for item in probability:
             for agent in self.value_agent:
+                if item.v.isReady():
+                    continue
+
+                isDone = False
                 v = agent.find(solution, probability, item)
                 if v:
-                    solution.add_step(item.index(), v)
+                    context.add_step(solution, item.index(), v)
+                    stepFound = True
+
+        # separate
+        if not (stepFound or isDone):
+            for item in probability:
+                p = item.v.possible_values()
+                if item.v.isReady():
+                    continue
+
+                while p:
+                    newSol = deepcopy(solution)
+                    context.add_solution(newSol)
+                    context.add_step(newSol, item.index(), p.pop())
+
+            context.remove_solution(solution)
+
+
 
 
 # ---------------------------------
@@ -92,11 +118,8 @@ class FindUniquePossibleValueInBelongedLineAgent(FindValueAgent):
     def find(self, solution, probability, item):
         p = item.v.possible_values()
         x, y = item.index()
-        rl = probability.row(y)
-        cl = probability.column(x)
-        bl = SolverMethod.belonged_box(x, y, probability, solution.box_shape()).to_list()
 
-        for l in [rl, cl, bl]:
+        for l in [probability.row(y), probability.column(x), SolverMethod.belonged_box(x, y, probability, solution.box_shape())]:
             line_p = copy(p)
             for i in l:
                 if item != i:
