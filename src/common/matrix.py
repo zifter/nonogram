@@ -77,7 +77,7 @@ class Matrix(object):
         if self.shape != other.shape:
             return False
 
-        return self.data == self.data
+        return self.data == other.data
 
     def __ne__(self, other):
         return not self.__eq__(other)

@@ -8,6 +8,8 @@ from sudoku.solution import Solution
 from sudoku.solution import SudokuDescr
 import cProfile
 
+# https://habrahabr.ru/post/173795/
+
 def profile(func):
     """Decorator for run function profile"""
     def wrapper(*args, **kwargs):
@@ -19,7 +21,7 @@ def profile(func):
     return wrapper
 
 class TestSolver(TestCaseSudoku):
-    @profile
+    #@profile
     def test_solve_and_compare(self):
         test_data = self.getSolverData()
         mySolver = Solver()
@@ -37,7 +39,7 @@ class TestSolver(TestCaseSudoku):
             print "answer"
             print s0
 
-            #self.assertEqual(s0, sols[0], "Solution failed: %s" % solution)
+            # self.assertEqual(s0, s1, "Solution failed: %s" % solution)
 
 
 if __name__ == '__main__':

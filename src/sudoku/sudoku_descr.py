@@ -26,7 +26,6 @@ class SudokuDescr(object):
     def box_shape(self):
         return self._box_shape
 
-
     def save(self):
         return {"matrix", self.matrix}
 
