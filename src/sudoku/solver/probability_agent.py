@@ -49,7 +49,7 @@ class FindUniquePossibleValueInBelongedLineStrategy(FindValueStrategy):
     def find(self, solution, item):
         lines = solution.probability_line(item.index())
         for l in lines:
-            line_p = copy(item.v.values())
+            line_p = item.v.values()
             for i in l:
                 if item != i:
                     line_p = line_p - i.v.values()

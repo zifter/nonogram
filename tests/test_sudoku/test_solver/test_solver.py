@@ -39,7 +39,7 @@ class TestSolver(TestCaseSudoku):
             print "answer"
             print s0
 
-            # self.assertEqual(s0, s1, "Solution failed: %s" % solution)
+            self.assertEqual(s0, s1, "Solution failed: %s" % solution)
 
 
 if __name__ == '__main__':

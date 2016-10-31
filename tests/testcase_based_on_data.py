@@ -17,7 +17,8 @@ class TestCaseBasedOnData(unittest.TestCase):
         folders = os.listdir(self.data_path)
 
         for f in folders:
-            result.append((join(self.data_path, f, "layout.png"), join(self.data_path, f, 'layout.json')))
+            if not f.startswith("_"):
+                result.append((join(self.data_path, f, "layout.png"), join(self.data_path, f, 'layout.json')))
 
         return result
 
@@ -26,6 +27,7 @@ class TestCaseBasedOnData(unittest.TestCase):
         folders = os.listdir(self.data_path)
 
         for f in folders:
-            result.append((f, join(self.data_path, f, "layout.json"), join(self.data_path, f, 'solution.json')))
+            if not f.startswith("_"):
+                result.append((f, join(self.data_path, f, "layout.json"), join(self.data_path, f, 'solution.json')))
 
         return result
